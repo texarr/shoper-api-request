@@ -1,12 +1,11 @@
 $(document).ready(function() {
   var responseContainer = $('.js-shoper-response');
   var shopUrl = 'https://sklep320930.shoparena.pl'
-  var apiKey;
   var requestUrl = shopUrl + '/webapi/rest/';
   var account = {
     login: 'admin',
     pass: '799f6507'
-  }
+  };
   var accessToken = {};
 
   responseContainer.html('<div class="col-6 offset-3">text message</div>');
@@ -14,32 +13,41 @@ $(document).ready(function() {
   getApiData();
 
   function getApiData() {
+    var getData;
 
+    // trying to get access token for 10 seconds
+    getAccessToken();
 
-      setTimeout(function(){
-        getAccessToken();
-        console.log('getting token');
-        console.log(accessToken.accessToken);
-      }, 200);
+    (function waitForElement() {
+        if(typeof accessToken.accessToken !== "undefined"){
+            //variable exists, do what you want
+            console.log(accessToken);
 
+            getData = $.ajax({
+                method: 'GET',
+                url: requestUrl + 'categories',
+                dataType: 'json',
+                async: false,
+                username: account.login,
+                password: account.pass,
+                headers: {
+                  "Authorization": accessToken.accessTokenType + ' ' + accessToken.accessToken
+                }
+            });
 
+            getData.done(function(response) {
+                console.log(response);
+            });
 
-
-
-
-    // var request = $.ajax({
-    //   method: 'GET',
-    //   url: requestUrl,
-    //   dataType: 'json'
-    // });
-    //
-    // request.done(function(data) {
-    //   responseContainer.html(data);
-    // });
-    //
-    // request.fail(function( jqXHR, textStatus ) {
-    //   alert( "Request failed: " + textStatus );
-    // });
+            getData.fail(function(jqXHR, textStatus) {
+                console.log(jqXHR);
+            });
+        }
+        else{
+            setTimeout(waitForElement, 250);
+            console.log('waiting for auth key...');
+        }
+    }());
   }
 
   function getAccessToken() {
@@ -56,7 +64,7 @@ $(document).ready(function() {
       accessToken = {
           accessToken: response.access_token,
           accessTokenType: response.token_type
-        }
+        };
     });
 
     request.fail(function( jqXHR, textStatus ) {
@@ -64,8 +72,4 @@ $(document).ready(function() {
       console.log(jqXHR);
     });
   }
-
-  // setTimeout(function(){
-  //   console.log(accessToken);
-  // }, 1000);
 });
