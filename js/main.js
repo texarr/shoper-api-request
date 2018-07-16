@@ -7,22 +7,39 @@ $(document).ready(function() {
     login: 'admin',
     pass: '799f6507'
   }
-  var accessToken;
+  var accessToken = {};
+
+  responseContainer.html('<div class="col-6 offset-3">text message</div>');
+
+  getApiData();
 
   function getApiData() {
-    var request = $.ajax({
-      method: 'GET',
-      url: requestUrl,
-      dataType: 'json'
-    });
 
-    request.done(function(data) {
-      $(responseContainer).html(data);
-    });
 
-    request.fail(function( jqXHR, textStatus ) {
-      alert( "Request failed: " + textStatus );
-    });
+      setTimeout(function(){
+        getAccessToken();
+        console.log('getting token');
+        console.log(accessToken.accessToken);
+      }, 200);
+
+
+
+
+
+
+    // var request = $.ajax({
+    //   method: 'GET',
+    //   url: requestUrl,
+    //   dataType: 'json'
+    // });
+    //
+    // request.done(function(data) {
+    //   responseContainer.html(data);
+    // });
+    //
+    // request.fail(function( jqXHR, textStatus ) {
+    //   alert( "Request failed: " + textStatus );
+    // });
   }
 
   function getAccessToken() {
@@ -48,8 +65,7 @@ $(document).ready(function() {
     });
   }
 
-  getAccessToken();
-  setTimeout(function(){
-    console.log(accessToken);
-  }, 1000)
+  // setTimeout(function(){
+  //   console.log(accessToken);
+  // }, 1000);
 });
